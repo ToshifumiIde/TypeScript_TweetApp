@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Auth.module.css";
 import { useDispatch } from "react-redux";
 import { auth, provider, storage } from "../firebase";
@@ -59,6 +59,18 @@ const useStyles = makeStyles((theme) => ({
 
 const Auth: React.FC = () => {
   const classes = useStyles();
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [isLogin, setIsLogin] = useState<boolean>(true);
+  // const [disabled, setDisabled] = useState<boolean>(true);
+
+  const signInWithEmailAndPassword = async () => {
+    await auth.signInWithEmailAndPassword(email, password);
+  };
+  const signUpWithEmailAndPassword = async () => {
+    await auth.createUserWithEmailAndPassword(email, password);
+  };
   const signInGoogle = async () => {
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
   };
@@ -72,8 +84,16 @@ const Auth: React.FC = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            {isLogin ? "Login" : "Resister"}
           </Typography>
+          <Grid container>
+            <Grid item xs={4}>Email:</Grid>
+            <Grid item xs={6}>test@testsample.com</Grid>
+          </Grid>
+          <Grid container>
+            <Grid item xs={4}>Password:</Grid>
+            <Grid item xs={6}>testsample</Grid>
+          </Grid>
           <form className={classes.form} noValidate>
             <TextField
               variant="outlined"
@@ -81,10 +101,14 @@ const Auth: React.FC = () => {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="メールアドレス"
               name="email"
               autoComplete="email"
               autoFocus
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setEmail(e.target.value);
+              }}
             />
             <TextField
               variant="outlined"
@@ -92,20 +116,59 @@ const Auth: React.FC = () => {
               required
               fullWidth
               name="password"
-              label="Password"
+              label="パスワード（6文字以上）"
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setPassword(e.target.value);
+              }}
             />
             <Button
-              type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
+              startIcon={<EmailIcon />}
+              onClick={
+                isLogin
+                  ? async () => {
+                      try {
+                        await signInWithEmailAndPassword();
+                      } catch (err) {
+                        alert(err.message);
+                      }
+                    }
+                  : async () => {
+                      try {
+                        await signUpWithEmailAndPassword();
+                      } catch (err) {
+                        alert(err.message);
+                      }
+                    }
+              }
+              // disabled={disabled}
             >
-              Sign In
+              {isLogin ? "Login" : "Register"}
             </Button>
+            <Grid container>
+              <Grid item xs={6}>
+                <span className={styles.login_reset}>
+                  Forgot your password?
+                </span>
+              </Grid>
+              <Grid item xs={6}>
+                <span
+                  className={styles.login_toggleMode}
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                  }}
+                >
+                  {isLogin ? "Create new account ?" : "Back to Login"}
+                </span>
+              </Grid>
+            </Grid>
             <Button
               fullWidth
               variant="contained"
