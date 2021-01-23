@@ -117,23 +117,67 @@ const Auth: React.FC = () => {
           <Typography component="h1" variant="h5">
             {isLogin ? "Login" : "Resister"}
           </Typography>
-          <Grid container>
-            <Grid item xs={3}>
-              Email:
-            </Grid>
-            <Grid item xs={6}>
-              test@testsample.com
-            </Grid>
-          </Grid>
-          <Grid container>
-            <Grid item xs={3}>
-              Password:
-            </Grid>
-            <Grid item xs={6}>
-              testsample
-            </Grid>
-          </Grid>
+          {isLogin && (
+            <>
+              <Grid container>
+                <Grid item xs={3}>
+                  Email:
+                </Grid>
+                <Grid item xs={6}>
+                  test@testsample.com
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs={3}>
+                  Password:
+                </Grid>
+                <Grid item xs={6}>
+                  testsample
+                </Grid>
+              </Grid>
+            </>
+          )}
+
           <form className={classes.form} noValidate>
+            {!isLogin && (
+              <>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="username"
+                  label="お名前"
+                  name="username"
+                  autoComplete="username"
+                  autoFocus
+                  value={username}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setUserName(e.target.value);
+                  }}
+                />
+                <Box textAlign="center">
+                  <IconButton>
+                    <label>
+                      <AccountCircleIcon
+                        fontSize="large"
+                        className={
+                          avatarImage
+                            ? styles.login_addIconLoaded
+                            : styles.login_addIcon
+                        }
+                      />
+                      <input
+                        className={styles.login_hiddenIcon}
+                        type="file"
+                        onChange={onChangeImageHandler}
+                      />
+                    </label>
+                  </IconButton>
+                </Box>
+              </>
+            )}
+
             <TextField
               variant="outlined"
               margin="normal"
@@ -187,7 +231,11 @@ const Auth: React.FC = () => {
                       }
                     }
               }
-              // disabled={disabled}
+              disabled={
+                isLogin
+                  ? !email || password.length < 6
+                  : !username || !email || password.length < 6 || !avatarImage
+              }
             >
               {isLogin ? "Login" : "Register"}
             </Button>
