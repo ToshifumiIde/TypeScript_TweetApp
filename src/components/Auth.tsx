@@ -59,7 +59,9 @@ const useStyles = makeStyles((theme) => ({
 
 const Auth: React.FC = () => {
   const classes = useStyles();
-
+  const signInGoogle = async () => {
+    await auth.signInWithPopup(provider).catch((err) => alert(err.message));
+  };
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -103,6 +105,15 @@ const Auth: React.FC = () => {
               className={classes.submit}
             >
               Sign In
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={signInGoogle}
+            >
+              SignIn with Google
             </Button>
           </form>
         </div>
