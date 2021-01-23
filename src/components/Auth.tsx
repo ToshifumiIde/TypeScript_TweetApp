@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Auth.module.css";
-import { useDispatch } from "react-redux";
+import { ReactReduxContextValue, useDispatch } from "react-redux";
 import { updateUserProfile } from "../features/userSlice";
 import { auth, provider, storage } from "../firebase";
 
@@ -23,6 +23,17 @@ import CameraIcon from "@material-ui/icons/Camera";
 import EmailIcon from "@material-ui/icons/Email";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%,-${left}%)`,
+  };
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,6 +67,15 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  modal: {
+    outLine: "none",
+    position: "absolute",
+    width: 400,
+    borderRadius: 10,
+    backgroundColor: "white",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(10),
+  },
 }));
 
 const Auth: React.FC = () => {
@@ -66,7 +86,21 @@ const Auth: React.FC = () => {
   const [username, setUserName] = useState<string>("");
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [isLogin, setIsLogin] = useState<boolean>(true);
-  // const [disabled, setDisabled] = useState<boolean>(true);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [resetEmail, setResetEmail] = useState<string>("");
+
+  const sendResetEmail = async (e: React.MouseEvent<HTMLElement>) => {
+    await auth
+      .sendPasswordResetEmail(resetEmail)
+      .then(() => {
+        setOpenModal(false);
+        setResetEmail("");
+      })
+      .catch((err) => {
+        alert(err.message);
+        setResetEmail("");
+      });
+  };
 
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files![0]) {
@@ -241,7 +275,12 @@ const Auth: React.FC = () => {
             </Button>
             <Grid container>
               <Grid item xs={6}>
-                <span className={styles.login_reset}>
+                <span
+                  className={styles.login_reset}
+                  onClick={() => {
+                    setOpenModal(true);
+                  }}
+                >
                   Forgot your password?
                 </span>
               </Grid>
@@ -262,10 +301,37 @@ const Auth: React.FC = () => {
               color="primary"
               className={classes.submit}
               onClick={signInGoogle}
+              startIcon={<CameraIcon />}
             >
               SignIn with Google
             </Button>
           </form>
+          <Modal
+            open={openModal}
+            onClose={() => {
+              setOpenModal(false);
+            }}
+          >
+            <div style={getModalStyle()} className={classes.modal}>
+              <div className={styles.login_modal}>
+                <TextField
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  type="email"
+                  name="email"
+                  label="メールアドレスをリセット"
+                  value={resetEmail}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setResetEmail(e.target.value);
+                  }}
+                />
+                <IconButton onClick={sendResetEmail}>
+                  <SendIcon />
+                </IconButton>
+              </div>
+            </div>
+          </Modal>
         </div>
       </Grid>
     </Grid>
