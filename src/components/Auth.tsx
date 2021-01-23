@@ -59,17 +59,40 @@ const useStyles = makeStyles((theme) => ({
 
 const Auth: React.FC = () => {
   const classes = useStyles();
-
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [username, setUserName] = useState<string>("");
+  const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [isLogin, setIsLogin] = useState<boolean>(true);
   // const [disabled, setDisabled] = useState<boolean>(true);
 
+  const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files![0]) {
+      setAvatarImage(e.target.files![0]);
+      e.target.value = "";
+    }
+  };
   const signInWithEmailAndPassword = async () => {
     await auth.signInWithEmailAndPassword(email, password);
   };
   const signUpWithEmailAndPassword = async () => {
-    await auth.createUserWithEmailAndPassword(email, password);
+    const authUser = await auth.createUserWithEmailAndPassword(email, password);
+    let url = "";
+    if (avatarImage) {
+      const S =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N = 16;
+      const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
+        .map((n) => S[n % S.length])
+        .join("");
+      const fileName = randomChar + "_" + avatarImage.name;
+      await storage.ref(`avatars/${fileName}`).put(avatarImage);
+      url = await storage.ref("avatars").child(fileName).getDownloadURL();
+    }
+    await authUser.user?.updateProfile({
+      displayName: username,
+      photoURL: url,
+    });
   };
   const signInGoogle = async () => {
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
@@ -87,12 +110,20 @@ const Auth: React.FC = () => {
             {isLogin ? "Login" : "Resister"}
           </Typography>
           <Grid container>
-            <Grid item xs={4}>Email:</Grid>
-            <Grid item xs={6}>test@testsample.com</Grid>
+            <Grid item xs={3}>
+              Email:
+            </Grid>
+            <Grid item xs={6}>
+              test@testsample.com
+            </Grid>
           </Grid>
           <Grid container>
-            <Grid item xs={4}>Password:</Grid>
-            <Grid item xs={6}>testsample</Grid>
+            <Grid item xs={3}>
+              Password:
+            </Grid>
+            <Grid item xs={6}>
+              testsample
+            </Grid>
           </Grid>
           <form className={classes.form} noValidate>
             <TextField
