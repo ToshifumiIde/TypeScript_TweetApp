@@ -16,7 +16,7 @@ const App: React.FC = () => {
         dispatch(
           login({
             uid: authUser.uid,
-            photoUrl: authUser.photoUrl,
+            photoUrl: authUser.photoURL,
             displayName: authUser.displayName,
           })
         );
@@ -31,7 +31,7 @@ const App: React.FC = () => {
   return (
     <>
       {user.uid ? (
-        <div className="styles.app">
+        <div className={styles.app}>
           <Feed />
         </div>
       ) : (
