@@ -12,7 +12,7 @@ export const userSlice = createSlice({
       //actionのpayloadから引き継いだuser情報を登録
     },
     logout: (state) => {
-      state.user = { uid: "", prhotoUrl: "", displayName: "" };
+      state.user = { uid: "", photoUrl: "", displayName: "" };
     },
   },
 });
