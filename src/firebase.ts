@@ -20,9 +20,13 @@ const firebaseConfig = {
   measurementId: REACT_APP_MEASUREMENT_ID,
 };
 
+//firebaseの初期化
 const firebaseApp = firebase.initializeApp(firebaseConfig);
-
+//firebaseのデータベース
 export const db = firebaseApp.firestore();
+//firebaseのauthentication(ユーザー認証)
 export const auth = firebase.auth();
+//firebaseのストレージにアクセス
 export const storage = firebase.storage();
+//firebaseのgoogleアカウント認証
 export const provider = new firebase.auth.GoogleAuthProvider();

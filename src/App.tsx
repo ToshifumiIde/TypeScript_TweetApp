@@ -5,10 +5,11 @@ import { selectUser, login, logout } from "./features/userSlice";
 import { auth } from "./firebase";
 import Feed from "./components/Feed";
 import Auth from "./components/Auth";
+
+
 const App: React.FC = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
-
   useEffect(() => {
     const unSub = auth.onAuthStateChanged((authUser) => {
       if (authUser) {

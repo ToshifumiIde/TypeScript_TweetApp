@@ -21,14 +21,17 @@ const TweetInput:React.FC = () => {
   const sendTweet = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (tweetImage) {
-      const S =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      //英数字のランダム情報を取得するための元データ
       const N = 16;
+      //取得するランダム情報の実数
       const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
         .map((n) => S[n % S.length])
-        .join("");
+        .join("");//arrayの要素を結合して、文字列としてrandomCharに格納
       const fileName = randomChar + "_" + tweetImage.name;
+      //ランダムの16文字と画像名を_で結合
       const uploadTweetImg = storage.ref(`images/${fileName}`).put(tweetImage);
+      
       uploadTweetImg.on(
         firebase.storage.TaskEvent.STATE_CHANGED,
         () => {},
