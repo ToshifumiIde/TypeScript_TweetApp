@@ -5,7 +5,7 @@ import { selectUser } from "../features/userSlice";
 import { storage, db, auth } from "../firebase";
 import { Avatar, Button, IconButton } from "@material-ui/core";
 import firebase from "firebase/app";
-import AddPhotoIcon from "@material-ui/icons/AddPhoto";
+import AddPhotoIcon from "@material-ui/icons/AddAPhoto";
 
 const TweetInput = () => {
   const user = useSelector(selectUser);
@@ -64,15 +64,50 @@ const TweetInput = () => {
     setTweetMsg("");
   };
   return (
-    <div>
-      <Avatar
-        className={styles.tweet_avatar}
-        src={user.photoUrl}
-        onClick={async () => {
-          await auth.signOut();
-        }}
-      />
-    </div>
+    <>
+      <form onSubmit={sendTweet}>
+        <div className={styles.tweet_form}>
+          <Avatar
+            className={styles.tweet_avatar}
+            src={user.photoUrl}
+            onClick={async () => {
+              await auth.signOut();
+            }}
+          />
+          <input
+            className={styles.tweet_input}
+            value={tweetMsg}
+            type="text"
+            autoFocus
+            placeholder="つぶやいてみよう♪"
+            onChange={(e) => {
+              setTweetMsg(e.target.value);
+            }}
+          />
+          <IconButton>
+            <label>
+              <AddPhotoIcon
+                className={
+                  tweetImage ? styles.tweet_addIconLoaded : styles.tweet_addIcon
+                }
+              />
+              <input
+                className={styles.tweet_hiddenIcon}
+                type="file"
+                onChange={onChangeImageHandler}
+              />
+            </label>
+          </IconButton>
+        </div>
+        <Button
+          type="submit"
+          disabled={!tweetMsg}
+          className={
+            tweetMsg ? styles.tweet_sendBtn : styles.tweet_sendDisableBtn
+          }
+        >つぶやく</Button>
+      </form>
+    </>
   );
 };
 
