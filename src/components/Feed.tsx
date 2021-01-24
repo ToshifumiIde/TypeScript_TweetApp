@@ -47,18 +47,22 @@ const Feed: React.FC = () => {
       >
         Logout
       </button> */}
-      {posts.map((post) => (
-        // <h3>{post.text}</h3>
-        <Post
-          key={post.id}
-          postId={post.id}
-          avatar={post.avatar}
-          image={post.image}
-          text={post.text}
-          timestamp={post.timestamp}
-          username={post.username}
-        />
-      ))}
+      {posts[0]?.id && (
+        <>
+          {posts.map((post) => (
+            // <h3>{post.text}</h3>
+            <Post
+              key={post.id}
+              postId={post.id}
+              avatar={post.avatar}
+              image={post.image}
+              text={post.text}
+              timestamp={post.timestamp}
+              username={post.username}
+            />
+          ))}
+        </>
+      )}
       {/* postsをmapで個々のpostに展開し、postオブジェクト各プロパティにアクセス */}
     </div>
   );
